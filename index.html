@@ -1,13 +1,2024 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspant - Swimming Training Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #111111;
+            --surface-bg: #1a1a1a;
+            --elevated-bg: #222222;
+            
+            --accent-primary: #3b82f6;
+            --accent-secondary: #2563eb;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-sport: #06d6a0;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --text-tertiary: #a3a3a3;
+            --text-quaternary: #737373;
+            --text-disabled: #525252;
+            
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-hover: rgba(255, 255, 255, 0.08);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+            
+            --transition-base: 0.3s ease;
+            --transition-3d: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(600px circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(400px circle at 80% 70%, rgba(6, 214, 160, 0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all var(--transition-base);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo .icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-sport), var(--accent-primary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-cta {
+            background: var(--accent-sport);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-base);
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-cta:hover {
+            background: #05c59a;
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding-top: 6rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            padding: 1rem 0;
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+            transition: color var(--transition-base);
+            font-size: 1rem;
+        }
+
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-sport);
+            transition: width var(--transition-base);
+        }
+
+        .tab-button.active,
+        .tab-button:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-button.active::after {
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-3d);
+        }
+
+        .card:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-3d);
+            text-decoration: none;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.primary {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .btn.primary:hover {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        .btn.success {
+            background: var(--accent-success);
+            border-color: var(--accent-success);
+        }
+
+        .btn.success:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+
+        .btn.sport {
+            background: var(--accent-sport);
+            border-color: var(--accent-sport);
+        }
+
+        .btn.sport:hover {
+            background: #05c59a;
+            border-color: #05c59a;
+        }
+
+        .btn.danger {
+            background: var(--accent-danger);
+            border-color: var(--accent-danger);
+        }
+
+        .btn.danger:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Training Session Management */
+        .training-session {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: var(--elevated-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Current Activity Display */
+        .current-activity {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .current-activity.running {
+            border-color: var(--accent-sport);
+            box-shadow: 0 0 30px rgba(6, 214, 160, 0.2), var(--shadow-xl);
+        }
+
+        .activity-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .current-athlete-name {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-sport);
+            margin-bottom: 1rem;
+        }
+
+        .time-display {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .time-display.running {
+            color: var(--accent-sport);
+            text-shadow: 0 0 30px rgba(6, 214, 160, 0.3);
+        }
+
+        .time-display.resting {
+            color: var(--accent-warning);
+        }
+
+        .activity-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Athletes Queue */
+        .athletes-queue {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .queue-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .queue-list {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .queue-athlete {
+            background: var(--elevated-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .queue-athlete.current {
+            border-color: var(--accent-sport);
+            background: rgba(6, 214, 160, 0.1);
+        }
+
+        .queue-athlete.completed {
+            opacity: 0.6;
+            border-color: var(--accent-success);
+        }
+
+        .queue-athlete-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .queue-athlete-time {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Program Progress */
+        .program-progress {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .program-list {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .program-step {
+            background: var(--elevated-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .program-step.current {
+            border-color: var(--accent-sport);
+            background: rgba(6, 214, 160, 0.1);
+        }
+
+        .program-step.completed {
+            border-color: var(--accent-success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .program-step.waiting {
+            opacity: 0.6;
+        }
+
+        .program-step-number {
+            background: var(--accent-sport);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .program-step.completed .program-step-number {
+            background: var(--accent-success);
+        }
+
+        .program-step-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .program-step-details {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Rest Timer */
+        .rest-timer {
+            background: var(--elevated-bg);
+            border: 2px solid var(--accent-warning);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: none;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+        }
+
+        .rest-timer.active {
+            display: block;
+            animation: fade-in 0.3s ease;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .rest-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-warning);
+            margin-bottom: 1rem;
+        }
+
+        .rest-time {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-warning);
+            margin-bottom: 1rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .rest-message {
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        /* Athlete Management */
+        .athlete-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .athlete-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .athlete-item:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+        }
+
+        .athlete-item.selected {
+            border-color: var(--accent-sport);
+            background: rgba(6, 214, 160, 0.1);
+        }
+
+        .athlete-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .athlete-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Program Management */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color var(--transition-base);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-input,
+        .form-select {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all var(--transition-base);
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-sport);
+            background: var(--glass-hover);
+            box-shadow: 0 0 0 3px rgba(6, 214, 160, 0.1);
+        }
+
+        .form-input::placeholder {   
+            color: var(--text-disabled);
+        }
+
+        /* Athlete Selection in Modal */
+        .athlete-selection {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .athlete-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--elevated-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .athlete-checkbox:hover {
+            background: var(--glass-hover);
+        }
+
+        .athlete-checkbox input[type="checkbox"] {
+            margin-right: 0.75rem;
+            accent-color: var(--accent-sport);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.ready {
+            background: var(--accent-success);
+        }
+
+        .status-indicator.running {
+            background: var(--accent-sport);
+            animation: pulse 1s infinite;
+        }
+
+        .status-indicator.resting {
+            background: var(--accent-warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .current-activity {
+                padding: 2rem 1rem;
+            }
+
+            .activity-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .session-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-tabs {
+                gap: 1rem;
+            }
+
+            .queue-list,
+            .program-list {
+                flex-direction: column;
+            }
+
+            .queue-athlete,
+            .program-step {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .session-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-layer"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="icon">S</div>
+                SwimTimer Pro
+            </div>
+            
+            <div class="nav-actions">
+                <button class="nav-cta" id="exportBtn">Export Data</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="content-tabs">
+                <button class="tab-button active" data-tab="training">Training</button>
+                <button class="tab-button" data-tab="athletes">Athletes</button>
+                <button class="tab-button" data-tab="programs">Programs</button>
+            </div>
+
+            <!-- Training Tab -->
+            <div class="tab-content active" id="training">
+                <!-- Training Session -->
+                <div class="training-session">
+                    <div class="session-header">
+                        <h2 style="margin: 0; color: var(--text-primary);">Training Session</h2>
+                        <div>
+                            <button class="btn sport" id="startSessionBtn">Start Session</button>
+                            <button class="btn danger" id="endSessionBtn" style="display: none;">End Session</button>
+                        </div>
+                    </div>
+
+                    <div class="session-info" id="sessionInfo" style="display: none;">
+                        <div class="info-item">
+                            <div class="info-label">Current Program</div>
+                            <div class="info-value" id="currentProgramName">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Athletes</div>
+                            <div class="info-value" id="totalAthletes">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Completed</div>
+                            <div class="info-value" id="completedCount">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Session Progress</div>
+                            <div class="info-value" id="sessionProgress">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Program Progress -->
+                <div class="program-progress" id="programProgress" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Program Sequence</h3>
+                    <div class="program-list" id="programList"></div>
+                </div>
+
+                <!-- Athletes Queue -->
+                <div class="athletes-queue" id="athletesQueue" style="display: none;">
+                    <h3 class="queue-title">Athletes Queue</h3>
+                    <div class="queue-list" id="queueList"></div>
+                </div>
+
+                <!-- Rest Timer -->
+                <div class="rest-timer" id="restTimer">
+                    <h3 class="rest-title">Rest Time</h3>
+                    <div class="rest-time" id="restTime">00:00</div>
+                    <div class="rest-message" id="restMessage">Prepare for next athlete</div>
+                    <button class="btn primary" id="skipRestBtn">Skip Rest</button>
+                </div>
+
+                <!-- Current Activity Display -->
+                <div class="current-activity" id="currentActivity" style="display: none;">
+                    <div class="activity-title" id="activityTitle">Ready to Start</div>
+                    <div class="current-athlete-name" id="currentAthleteName">Select Programs and Athletes</div>
+                    <div class="time-display" id="timeDisplay">00:00.000</div>
+                    <div class="activity-controls">
+                        <button class="btn primary" id="startStopBtn">Start</button>
+                        <button class="btn success" id="finishBtn" disabled>Finish</button>
+                        <button class="btn danger" id="resetBtn">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Athletes Tab -->
+            <div class="tab-content" id="athletes">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Athletes</h3>
+                        <button class="btn sport" id="addAthleteBtn">Add Athlete</button>
+                    </div>
+                    <div class="athlete-list" id="athleteList">
+                        <div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No athletes added yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programs Tab -->
+            <div class="tab-content" id="programs">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Training Programs</h3>
+                        <button class="btn sport" id="addProgramBtn">Add Program</button>
+                    </div>
+                    <div class="cards-grid" id="programCards">
+                        <div style="text-align: center; color: var(--text-disabled); padding: 2rem; grid-column: 1/-1;">No training programs added yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Athlete Modal -->
+    <div class="modal" id="athleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Athlete</h3>
+                <button class="modal-close" id="closeAthleteModal">&times;</button>
+            </div>
+            <form id="athleteForm">
+                <div class="form-group">
+                    <label class="form-label">Athlete Name</label>
+                    <input type="text" class="form-input" id="athleteName" placeholder="Enter athlete name" required>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn" id="cancelAthleteBtn">Cancel</button>
+                    <button type="submit" class="btn sport">Add Athlete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Program Modal -->
+    <div class="modal" id="programModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Training Program</h3>
+                <button class="modal-close" id="closeProgramModal">&times;</button>
+            </div>
+            <form id="programForm">
+                <div class="form-group">
+                    <label class="form-label">Program Name</label>
+                    <input type="text" class="form-input" id="programName" placeholder="e.g., Sprint Training" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Distance (meters)</label>
+                    <input type="number" class="form-input" id="programDistance" placeholder="e.g., 50" min="25" step="25" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stroke</label>
+                    <select class="form-select" id="programStroke" required style="background-color: #2c2c2c;">
+                        <option value="">Select stroke</option>
+                        <option value="freestyle">Freestyle</option>
+                        <option value="backstroke">Backstroke</option>
+                        <option value="breaststroke">Breaststroke</option>
+                        <option value="butterfly">Butterfly</option>
+                        <option value="medley">Individual Medley</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Number of Sets</label>
+                    <input type="number" class="form-input" id="programSets" placeholder="e.g., 4" min="1" max="20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rest Time (seconds)</label>
+                    <input type="number" class="form-input" id="programRestTime" placeholder="e.g., 30" min="0" step="5">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Target Time (optional)</label>
+                    <input type="text" class="form-input" id="programTargetTime" placeholder="mm:ss.ms (e.g., 01:30.00)">
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn" id="cancelProgramBtn">Cancel</button>
+                    <button type="submit" class="btn sport">Add Program</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Start Session Modal -->
+    <div class="modal" id="sessionModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Start Training Session</h3>
+                <button class="modal-close" id="closeSessionModal">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Select Programs (in order)</label>
+                <div id="programSelection">
+                    <div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No programs available</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select Athletes</label>
+                <div class="athlete-selection" id="athleteSelection">
+                    <div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No athletes available</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn" id="cancelSessionBtn">Cancel</button>
+                <button type="button" class="btn sport" id="confirmSessionBtn">Start Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SwimTimerPro {
+            constructor() {
+                // Timer state
+                this.startTime = 0;
+                this.elapsedTime = 0;
+                this.isRunning = false;
+                this.intervalId = null;
+                
+                // Rest timer state
+                this.restStartTime = 0;
+                this.restElapsedTime = 0;
+                this.isResting = false;
+                this.restIntervalId = null;
+                
+                // Session state
+                this.sessionActive = false;
+                this.selectedPrograms = [];
+                this.selectedAthletes = [];
+                this.currentProgramIndex = 0;
+                this.currentAthleteIndex = 0;
+                this.currentSet = 0;
+                this.athleteResults = {};
+                
+                // Data storage
+                this.athletes = this.loadData('swimTimer_athletes', []);
+                this.programs = this.loadData('swimTimer_programs', []);
+                this.results = this.loadData('swimTimer_results', []);
+                
+                this.currentTab = 'training';
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.loadInitialData();
+                this.updateDisplay();
+            }
+
+            initializeElements() {
+                // Session elements
+                this.startSessionBtn = document.getElementById('startSessionBtn');
+                this.endSessionBtn = document.getElementById('endSessionBtn');
+                this.sessionInfo = document.getElementById('sessionInfo');
+                this.currentProgramName = document.getElementById('currentProgramName');
+                this.totalAthletes = document.getElementById('totalAthletes');
+                this.completedCount = document.getElementById('completedCount');
+                this.sessionProgress = document.getElementById('sessionProgress');
+                
+                // Activity display elements
+                this.currentActivity = document.getElementById('currentActivity');
+                this.activityTitle = document.getElementById('activityTitle');
+                this.currentAthleteName = document.getElementById('currentAthleteName');
+                this.timeDisplay = document.getElementById('timeDisplay');
+                this.startStopBtn = document.getElementById('startStopBtn');
+                this.finishBtn = document.getElementById('finishBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                
+                // Program progress elements
+                this.programProgress = document.getElementById('programProgress');
+                this.programList = document.getElementById('programList');
+                
+                // Athletes queue elements
+                this.athletesQueue = document.getElementById('athletesQueue');
+                this.queueList = document.getElementById('queueList');
+                
+                // Rest timer elements
+                this.restTimer = document.getElementById('restTimer');
+                this.restTime = document.getElementById('restTime');
+                this.restMessage = document.getElementById('restMessage');
+                this.skipRestBtn = document.getElementById('skipRestBtn');
+                
+                // Lists
+                this.athleteList = document.getElementById('athleteList');
+                this.programCards = document.getElementById('programCards');
+                
+                // Modals
+                this.athleteModal = document.getElementById('athleteModal');
+                this.programModal = document.getElementById('programModal');
+                this.sessionModal = document.getElementById('sessionModal');
+                
+                // Modal content
+                this.programSelection = document.getElementById('programSelection');
+                this.athleteSelection = document.getElementById('athleteSelection');
+                
+                // Forms
+                this.athleteForm = document.getElementById('athleteForm');
+                this.programForm = document.getElementById('programForm');
+                
+                // Export button
+                this.exportBtn = document.getElementById('exportBtn');
+            }
+
+            bindEvents() {
+                // Session controls
+                this.startSessionBtn.addEventListener('click', () => this.openSessionModal());
+                this.endSessionBtn.addEventListener('click', () => this.endSession());
+                
+                // Activity controls
+                this.startStopBtn.addEventListener('click', () => this.toggleTimer());
+                this.finishBtn.addEventListener('click', () => this.finishCurrentActivity());
+                this.resetBtn.addEventListener('click', () => this.resetTimer());
+                this.skipRestBtn.addEventListener('click', () => this.skipRest());
+                
+                // Export functionality
+                this.exportBtn.addEventListener('click', () => this.exportToCSV());
+                
+                // Tab switching
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tab = e.target.getAttribute('data-tab');
+                        this.switchTab(tab);
+                    });
+                });
+                
+                // Modal controls
+                document.getElementById('addAthleteBtn').addEventListener('click', () => this.openAthleteModal());
+                document.getElementById('addProgramBtn').addEventListener('click', () => this.openProgramModal());
+                
+                // Modal close buttons
+                document.getElementById('closeAthleteModal').addEventListener('click', () => this.closeAthleteModal());
+                document.getElementById('closeProgramModal').addEventListener('click', () => this.closeProgramModal());
+                document.getElementById('closeSessionModal').addEventListener('click', () => this.closeSessionModal());
+                document.getElementById('cancelAthleteBtn').addEventListener('click', () => this.closeAthleteModal());
+                document.getElementById('cancelProgramBtn').addEventListener('click', () => this.closeProgramModal());
+                document.getElementById('cancelSessionBtn').addEventListener('click', () => this.closeSessionModal());
+                document.getElementById('confirmSessionBtn').addEventListener('click', () => this.startSession());
+                
+                // Form submissions
+                this.athleteForm.addEventListener('submit', (e) => this.handleAthleteSubmit(e));
+                this.programForm.addEventListener('submit', (e) => this.handleProgramSubmit(e));
+                
+                // Close modals on background click
+                [this.athleteModal, this.programModal, this.sessionModal].forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.classList.remove('active');
+                        }
+                    });
+                });
+            }
+
+            // Data Management
+            loadData(key, defaultValue) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : defaultValue;
+                } catch (error) {
+                    console.error(`Error loading ${key}:`, error);
+                    return defaultValue;
+                }
+            }
+
+            saveData(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (error) {
+                    console.error(`Error saving ${key}:`, error);
+                }
+            }
+
+            loadInitialData() {
+                this.renderAthletes();
+                this.renderPrograms();
+                this.updateSessionDisplay();
+            }
+
+            // Tab Management
+            switchTab(tab) {
+                if (tab === this.currentTab) return;
+                
+                // Update tab buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-tab') === tab) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tab).classList.add('active');
+                
+                this.currentTab = tab;
+            }
+
+            // Session Management
+            openSessionModal() {
+                if (this.programs.length === 0) {
+                    this.showNotification('Please add training programs first', 'warning');
+                    this.switchTab('programs');
+                    return;
+                }
+                
+                if (this.athletes.length === 0) {
+                    this.showNotification('Please add athletes first', 'warning');
+                    this.switchTab('athletes');
+                    return;
+                }
+                
+                this.renderProgramSelection();
+                this.renderAthleteSelection();
+                this.sessionModal.classList.add('active');
+            }
+
+            closeSessionModal() {
+                this.sessionModal.classList.remove('active');
+            }
+
+            renderProgramSelection() {
+                if (this.programs.length === 0) {
+                    this.programSelection.innerHTML = '<div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No programs available</div>';
+                    return;
+                }
+                
+                this.programSelection.innerHTML = this.programs.map((program, index) => `
+                    <div class="athlete-checkbox">
+                        <input type="checkbox" id="program_${program.id}" value="${program.id}">
+                        <label for="program_${program.id}" style="flex: 1; cursor: pointer;">
+                            <strong>${program.name}</strong><br>
+                            <small style="color: var(--text-tertiary);">${program.distance}m ${this.capitalizeFirst(program.stroke)} - ${program.sets} sets</small>
+                        </label>
+                    </div>
+                `).join('');
+            }
+
+            renderAthleteSelection() {
+                if (this.athletes.length === 0) {
+                    this.athleteSelection.innerHTML = '<div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No athletes available</div>';
+                    return;
+                }
+                
+                this.athleteSelection.innerHTML = this.athletes.map(athlete => `
+                    <div class="athlete-checkbox">
+                        <input type="checkbox" id="athlete_${athlete.id}" value="${athlete.id}">
+                        <label for="athlete_${athlete.id}" style="flex: 1; cursor: pointer;">${athlete.name}</label>
+                    </div>
+                `).join('');
+            }
+
+            startSession() {
+                // Get selected programs in order
+                const selectedProgramIds = [];
+                this.programSelection.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedProgramIds.push(parseInt(checkbox.value));
+                });
+                
+                // Get selected athletes
+                const selectedAthleteIds = [];
+                this.athleteSelection.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedAthleteIds.push(parseInt(checkbox.value));
+                });
+                
+                if (selectedProgramIds.length === 0) {
+                    this.showNotification('Please select at least one program', 'warning');
+                    return;
+                }
+                
+                if (selectedAthleteIds.length === 0) {
+                    this.showNotification('Please select at least one athlete', 'warning');
+                    return;
+                }
+                
+                // Set up session data
+                this.selectedPrograms = selectedProgramIds.map(id => this.programs.find(p => p.id === id));
+                this.selectedAthletes = selectedAthleteIds.map(id => this.athletes.find(a => a.id === id));
+                
+                // Initialize session state
+                this.sessionActive = true;
+                this.currentProgramIndex = 0;
+                this.currentAthleteIndex = 0;
+                this.currentSet = 1;
+                this.athleteResults = {};
+                
+                // Initialize athlete results structure
+                this.selectedAthletes.forEach(athlete => {
+                    this.athleteResults[athlete.id] = {};
+                    this.selectedPrograms.forEach(program => {
+                        this.athleteResults[athlete.id][program.id] = {
+                            sets: [],
+                            completed: false
+                        };
+                    });
+                });
+                
+                this.closeSessionModal();
+                this.updateSessionDisplay();
+                this.showNotification('Training session started!', 'success');
+            }
+
+            endSession() {
+                if (confirm('Are you sure you want to end the current training session?')) {
+                    this.sessionActive = false;
+                    this.resetTimer();
+                    this.stopRest();
+                    this.updateSessionDisplay();
+                    this.showNotification('Training session ended', 'info');
+                }
+            }
+
+            getCurrentProgram() {
+                if (!this.sessionActive || this.currentProgramIndex >= this.selectedPrograms.length) {
+                    return null;
+                }
+                return this.selectedPrograms[this.currentProgramIndex];
+            }
+
+            getCurrentAthlete() {
+                if (!this.sessionActive || this.currentAthleteIndex >= this.selectedAthletes.length) {
+                    return null;
+                }
+                return this.selectedAthletes[this.currentAthleteIndex];
+            }
+
+            // Timer Functions
+            toggleTimer() {
+                if (!this.sessionActive) {
+                    this.showNotification('Please start a training session first', 'warning');
+                    return;
+                }
+                
+                if (this.isRunning) {
+                    this.stopTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+
+            startTimer() {
+                const currentProgram = this.getCurrentProgram();
+                const currentAthlete = this.getCurrentAthlete();
+                
+                if (!currentProgram || !currentAthlete) {
+                    this.showNotification('No active program or athlete', 'warning');
+                    return;
+                }
+                
+                if (this.elapsedTime === 0) {
+                    this.startTime = Date.now();
+                } else {
+                    this.startTime = Date.now() - this.elapsedTime;
+                }
+
+                this.isRunning = true;
+                this.intervalId = setInterval(() => this.updateDisplay(), 10);
+                
+                this.updateActivityControls();
+                this.currentActivity.classList.add('running');
+                this.timeDisplay.classList.add('running');
+            }
+
+            stopTimer() {
+                this.isRunning = false;
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = null;
+                }
+                
+                this.elapsedTime = Date.now() - this.startTime;
+                this.updateActivityControls();
+                this.currentActivity.classList.remove('running');
+                this.timeDisplay.classList.remove('running');
+            }
+
+            resetTimer() {
+                this.stopTimer();
+                this.stopRest();
+                this.startTime = 0;
+                this.elapsedTime = 0;
+                this.updateDisplay();
+                this.updateActivityControls();
+            }
+
+            finishCurrentActivity() {
+                if (!this.isRunning) return;
+                
+                const finishTime = this.elapsedTime;
+                this.stopTimer();
+                
+                this.recordResult(finishTime);
+                this.proceedToNextActivity();
+            }
+
+            proceedToNextActivity() {
+                const currentProgram = this.getCurrentProgram();
+                const currentAthlete = this.getCurrentAthlete();
+                
+                if (!currentProgram || !currentAthlete) return;
+                
+                // Check if current athlete completed all sets for current program
+                const athleteResult = this.athleteResults[currentAthlete.id][currentProgram.id];
+                
+                if (this.currentSet >= currentProgram.sets) {
+                    // Mark current program as completed for current athlete
+                    athleteResult.completed = true;
+                    
+                    // Move to next athlete
+                    this.currentAthleteIndex++;
+                    this.currentSet = 1;
+                    
+                    // If all athletes completed current program, move to next program
+                    if (this.currentAthleteIndex >= this.selectedAthletes.length) {
+                        this.currentProgramIndex++;
+                        this.currentAthleteIndex = 0;
+                        
+                        // Check if all programs are completed
+                        if (this.currentProgramIndex >= this.selectedPrograms.length) {
+                            this.completeSession();
+                            return;
+                        }
+                    }
+                } else {
+                    // Same athlete, next set
+                    this.currentSet++;
+                }
+                
+                // Start rest period if enabled
+                if (currentProgram.restTime > 0) {
+                    this.startRest();
+                } else {
+                    this.prepareNextActivity();
+                }
+            }
+
+            prepareNextActivity() {
+                this.elapsedTime = 0;
+                this.updateDisplay();
+                this.updateSessionDisplay();
+                this.updateActivityControls();
+            }
+
+            completeSession() {
+                this.showNotification('All programs completed! Excellent work everyone!', 'success');
+                this.sessionActive = false;
+                this.updateSessionDisplay();
+            }
+
+            // Rest Timer Functions
+            startRest() {
+                const currentProgram = this.getCurrentProgram();
+                if (!currentProgram) return;
+                
+                this.restStartTime = Date.now();
+                this.restElapsedTime = 0;
+                this.isResting = true;
+                this.restTimer.classList.add('active');
+                
+                const restDuration = currentProgram.restTime * 1000;
+                this.updateRestMessage();
+                
+                this.restIntervalId = setInterval(() => {
+                    this.restElapsedTime = Date.now() - this.restStartTime;
+                    const remaining = Math.max(0, restDuration - this.restElapsedTime);
+                    
+                    this.restTime.textContent = this.formatTime(remaining, false, true);
+                    
+                    if (remaining <= 0) {
+                        this.completeRest();
+                    }
+                }, 100);
+            }
+
+            updateRestMessage() {
+                const nextAthlete = this.getCurrentAthlete();
+                const nextProgram = this.getCurrentProgram();
+                
+                if (nextAthlete && nextProgram) {
+                    if (this.currentSet <= nextProgram.sets) {
+                        this.restMessage.textContent = `Next: ${nextAthlete.name} - Set ${this.currentSet}`;
+                    } else {
+                        this.restMessage.textContent = `Next: ${nextAthlete.name} - ${nextProgram.name}`;
+                    }
+                } else {
+                    this.restMessage.textContent = 'Preparing next activity...';
+                }
+            }
+
+            completeRest() {
+                this.stopRest();
+                this.prepareNextActivity();
+                this.showNotification('Rest completed! Ready for next activity', 'info');
+            }
+
+            skipRest() {
+                this.stopRest();
+                this.prepareNextActivity();
+            }
+
+            stopRest() {
+                this.isResting = false;
+                if (this.restIntervalId) {
+                    clearInterval(this.restIntervalId);
+                    this.restIntervalId = null;
+                }
+                this.restTimer.classList.remove('active');
+            }
+
+            // Display Updates
+            updateDisplay() {
+                const currentTime = this.isRunning ? 
+                    Date.now() - this.startTime : 
+                    this.elapsedTime;
+                
+                this.timeDisplay.textContent = this.formatTime(currentTime);
+            }
+
+            updateActivityControls() {
+                if (this.isRunning) {
+                    this.startStopBtn.textContent = 'Stop';
+                    this.startStopBtn.classList.remove('primary');
+                    this.startStopBtn.classList.add('danger');
+                    this.finishBtn.disabled = false;
+                    this.resetBtn.disabled = true;
+                } else {
+                    this.startStopBtn.textContent = this.elapsedTime > 0 ? 'Resume' : 'Start';
+                    this.startStopBtn.classList.remove('danger');
+                    this.startStopBtn.classList.add('primary');
+                    this.finishBtn.disabled = true;
+                    this.resetBtn.disabled = false;
+                }
+            }
+
+            updateSessionDisplay() {
+                if (!this.sessionActive) {
+                    this.startSessionBtn.style.display = 'inline-flex';
+                    this.endSessionBtn.style.display = 'none';
+                    this.sessionInfo.style.display = 'none';
+                    this.programProgress.style.display = 'none';
+                    this.athletesQueue.style.display = 'none';
+                    this.currentActivity.style.display = 'none';
+                    return;
+                }
+                
+                this.startSessionBtn.style.display = 'none';
+                this.endSessionBtn.style.display = 'inline-flex';
+                this.sessionInfo.style.display = 'grid';
+                this.programProgress.style.display = 'block';
+                this.athletesQueue.style.display = 'block';
+                this.currentActivity.style.display = 'block';
+                
+                // Update session info
+                const currentProgram = this.getCurrentProgram();
+                if (currentProgram) {
+                    this.currentProgramName.textContent = currentProgram.name;
+                }
+                
+                this.totalAthletes.textContent = this.selectedAthletes.length;
+                
+                const completedCount = this.calculateCompletedCount();
+                this.completedCount.textContent = completedCount;
+                
+                const totalActivities = this.selectedPrograms.length * this.selectedAthletes.length;
+                const progress = totalActivities > 0 ? Math.round((completedCount / totalActivities) * 100) : 0;
+                this.sessionProgress.textContent = `${progress}%`;
+                
+                // Update current athlete display
+                this.updateCurrentAthleteDisplay();
+                
+                // Update program progress
+                this.updateProgramProgress();
+                
+                // Update athletes queue
+                this.updateAthletesQueue();
+            }
+
+            calculateCompletedCount() {
+                let count = 0;
+                this.selectedAthletes.forEach(athlete => {
+                    this.selectedPrograms.forEach(program => {
+                        if (this.athleteResults[athlete.id] && 
+                            this.athleteResults[athlete.id][program.id] && 
+                            this.athleteResults[athlete.id][program.id].completed) {
+                            count++;
+                        }
+                    });
+                });
+                return count;
+            }
+
+            updateCurrentAthleteDisplay() {
+                const currentAthlete = this.getCurrentAthlete();
+                const currentProgram = this.getCurrentProgram();
+                
+                if (!currentAthlete || !currentProgram) {
+                    this.activityTitle.textContent = 'Session Complete';
+                    this.currentAthleteName.textContent = 'All Activities Finished';
+                    return;
+                }
+                
+                this.activityTitle.textContent = `${currentProgram.name} - Set ${this.currentSet}/${currentProgram.sets}`;
+                this.currentAthleteName.textContent = currentAthlete.name;
+            }
+
+            updateProgramProgress() {
+                this.programList.innerHTML = this.selectedPrograms.map((program, index) => {
+                    let status = 'waiting';
+                    if (index < this.currentProgramIndex) {
+                        status = 'completed';
+                    } else if (index === this.currentProgramIndex) {
+                        status = 'current';
+                    }
+                    
+                    return `
+                        <div class="program-step ${status}">
+                            <div class="program-step-number">${index + 1}</div>
+                            <div class="program-step-title">${program.name}</div>
+                            <div class="program-step-details">${program.distance}m ${this.capitalizeFirst(program.stroke)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateAthletesQueue() {
+                this.queueList.innerHTML = this.selectedAthletes.map((athlete, index) => {
+                    const currentProgram = this.getCurrentProgram();
+                    let status = '';
+                    let timeText = '';
+                    
+                    if (currentProgram && this.athleteResults[athlete.id] && this.athleteResults[athlete.id][currentProgram.id]) {
+                        const result = this.athleteResults[athlete.id][currentProgram.id];
+                        if (result.completed) {
+                            status = 'completed';
+                            if (result.sets.length > 0) {
+                                const bestTime = Math.min(...result.sets.map(s => s.time));
+                                timeText = this.formatTime(bestTime);
+                            }
+                        } else if (index === this.currentAthleteIndex) {
+                            status = 'current';
+                            timeText = 'In Progress';
+                        } else {
+                            timeText = 'Waiting';
+                        }
+                    }
+                    
+                    return `
+                        <div class="queue-athlete ${status}">
+                            <div class="queue-athlete-name">${athlete.name}</div>
+                            <div class="queue-athlete-time">${timeText}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Result Recording
+            recordResult(time) {
+                const currentAthlete = this.getCurrentAthlete();
+                const currentProgram = this.getCurrentProgram();
+                
+                if (!currentAthlete || !currentProgram) return;
+                
+                const result = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    athleteName: currentAthlete.name,
+                    programName: currentProgram.name,
+                    setNumber: this.currentSet,
+                    distance: currentProgram.distance,
+                    stroke: currentProgram.stroke,
+                    time: time,
+                    formattedTime: this.formatTime(time),
+                    targetTime: currentProgram.targetTime
+                };
+                
+                // Store in global results
+                this.results.push(result);
+                this.saveData('swimTimer_results', this.results);
+                
+                // Store in athlete results for session tracking
+                this.athleteResults[currentAthlete.id][currentProgram.id].sets.push({
+                    setNumber: this.currentSet,
+                    time: time,
+                    formattedTime: this.formatTime(time)
+                });
+                
+                this.showNotification(`${currentAthlete.name}: ${this.formatTime(time)}`, 'success');
+            }
+
+            // Athlete Management
+            openAthleteModal() {
+                this.athleteModal.classList.add('active');
+                document.getElementById('athleteName').focus();
+            }
+
+            closeAthleteModal() {
+                this.athleteModal.classList.remove('active');
+                this.athleteForm.reset();
+            }
+
+            handleAthleteSubmit(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('athleteName').value.trim();
+                if (!name) {
+                    this.showNotification('Please enter athlete name', 'warning');
+                    return;
+                }
+                
+                const athlete = {
+                    id: Date.now(),
+                    name: name,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.athletes.push(athlete);
+                this.saveData('swimTimer_athletes', this.athletes);
+                this.renderAthletes();
+                this.closeAthleteModal();
+                this.showNotification(`Athlete "${name}" added successfully`, 'success');
+            }
+
+            deleteAthlete(id) {
+                const athlete = this.athletes.find(a => a.id === id);
+                if (!athlete) return;
+                
+                if (confirm(`Are you sure you want to delete "${athlete.name}"?`)) {
+                    this.athletes = this.athletes.filter(a => a.id !== id);
+                    this.saveData('swimTimer_athletes', this.athletes);
+                    this.renderAthletes();
+                    this.showNotification(`Athlete "${athlete.name}" deleted`, 'info');
+                }
+            }
+
+            renderAthletes() {
+                if (this.athletes.length === 0) {
+                    this.athleteList.innerHTML = '<div style="text-align: center; color: var(--text-disabled); padding: 2rem;">No athletes added yet</div>';
+                    return;
+                }
+                
+                this.athleteList.innerHTML = this.athletes.map(athlete => `
+                    <div class="athlete-item">
+                        <div class="athlete-name">${athlete.name}</div>
+                        <div class="athlete-actions">
+                            <button class="btn danger" onclick="swimTimer.deleteAthlete(${athlete.id})" style="padding: 0.5rem;">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Program Management
+            openProgramModal() {
+                this.programModal.classList.add('active');
+                document.getElementById('programName').focus();
+            }
+
+            closeProgramModal() {
+                this.programModal.classList.remove('active');
+                this.programForm.reset();
+            }
+
+            handleProgramSubmit(e) {
+                e.preventDefault();
+                
+                const program = {
+                    id: Date.now(),
+                    name: document.getElementById('programName').value.trim(),
+                    distance: parseInt(document.getElementById('programDistance').value),
+                    stroke: document.getElementById('programStroke').value,
+                    sets: parseInt(document.getElementById('programSets').value),
+                    restTime: parseInt(document.getElementById('programRestTime').value) || 0,
+                    targetTime: document.getElementById('programTargetTime').value.trim() || null,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.programs.push(program);
+                this.saveData('swimTimer_programs', this.programs);
+                this.renderPrograms();
+                this.closeProgramModal();
+                this.showNotification(`Program "${program.name}" added successfully`, 'success');
+            }
+
+            deleteProgram(id) {
+                const program = this.programs.find(p => p.id === id);
+                if (!program) return;
+                
+                if (confirm(`Are you sure you want to delete "${program.name}"?`)) {
+                    this.programs = this.programs.filter(p => p.id !== id);
+                    this.saveData('swimTimer_programs', this.programs);
+                    this.renderPrograms();
+                    this.showNotification(`Program "${program.name}" deleted`, 'info');
+                }
+            }
+
+            renderPrograms() {
+                if (this.programs.length === 0) {
+                    this.programCards.innerHTML = '<div style="text-align: center; color: var(--text-disabled); padding: 2rem; grid-column: 1/-1;">No training programs added yet</div>';
+                    return;
+                }
+                
+                this.programCards.innerHTML = this.programs.map(program => `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">${program.name}</h3>
+                            <span style="background: var(--accent-sport); color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">${program.sets} sets</span>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <div style="font-size: 0.875rem; color: var(--text-tertiary);">Distance</div>
+                                    <div style="font-weight: 600;">${program.distance}m</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.875rem; color: var(--text-tertiary);">Stroke</div>
+                                    <div style="font-weight: 600;">${this.capitalizeFirst(program.stroke)}</div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                <div>
+                                    <div style="font-size: 0.875rem; color: var(--text-tertiary);">Rest Time</div>
+                                    <div style="font-weight: 600;">${program.restTime}s</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.875rem; color: var(--text-tertiary);">Target</div>
+                                    <div style="font-weight: 600;">${program.targetTime || '-'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                            <button class="btn danger" onclick="swimTimer.deleteProgram(${program.id})" style="padding: 0.5rem 1rem;">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Export to CSV
+            exportToCSV() {
+                if (this.results.length === 0) {
+                    this.showNotification('No results to export', 'warning');
+                    return;
+                }
+                
+                const headers = [
+                    'Date',
+                    'Time', 
+                    'Athlete',
+                    'Program',
+                    'Set',
+                    'Distance (m)',
+                    'Stroke',
+                    'Result Time',
+                    'Target Time'
+                ];
+                
+                const csvData = [
+                    headers,
+                    ...this.results.map(result => [
+                        new Date(result.timestamp).toLocaleDateString(),
+                        new Date(result.timestamp).toLocaleTimeString(),
+                        result.athleteName,
+                        result.programName,
+                        result.setNumber,
+                        result.distance,
+                        this.capitalizeFirst(result.stroke),
+                        result.formattedTime,
+                        result.targetTime || '-'
+                    ])
+                ];
+                
+                const csvContent = csvData.map(row => row.join(',')).join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `swimming_results_${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    this.showNotification('Results exported to CSV successfully', 'success');
+                }
+            }
+
+            // Utility Functions
+            formatTime(milliseconds, includeHours = false, restFormat = false) {
+                if (restFormat) {
+                    const totalSeconds = Math.ceil(milliseconds / 1000);
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                const totalSeconds = Math.floor(milliseconds / 1000);
+                const ms = milliseconds % 1000;
+                const seconds = totalSeconds % 60;
+                const minutes = Math.floor(totalSeconds / 60) % 60;
+                const hours = Math.floor(totalSeconds / 3600);
+
+                const msStr = ms.toString().padStart(3, '0');
+                const secStr = seconds.toString().padStart(2, '0');
+                const minStr = minutes.toString().padStart(2, '0');
+                const hourStr = hours.toString().padStart(2, '0');
+
+                if (includeHours || hours > 0) {
+                    return `${hourStr}:${minStr}:${secStr}.${msStr}`;
+                }
+                return `${minStr}:${secStr}.${msStr}`;
+            }
+
+            capitalizeFirst(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+
+            showNotification(message, type = 'info') {
+                // Simple notification system
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 600;
+                    z-index: 3000;
+                    transition: all 0.3s ease;
+                    backdrop-filter: blur(10px);
+                `;
+                
+                switch (type) {
+                    case 'success':
+                        notification.style.background = 'var(--accent-success)';
+                        break;
+                    case 'warning':
+                        notification.style.background = 'var(--accent-warning)';
+                        break;
+                    case 'danger':
+                        notification.style.background = 'var(--accent-danger)';
+                        break;
+                    default:
+                        notification.style.background = 'var(--accent-primary)';
+                }
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100px)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize the app
+        let swimTimer;
+        document.addEventListener('DOMContentLoaded', () => {
+            swimTimer = new SwimTimerPro();
+        });
+
+        // Add visual feedback for button presses
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn')) {
+                e.target.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    e.target.style.transform = '';
+                }, 150);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    swimTimer.toggleTimer();
+                    break;
+                case 'Enter':
+                    if (swimTimer.isRunning) {
+                        e.preventDefault();
+                        swimTimer.finishCurrentActivity();
+                    }
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    swimTimer.resetTimer();
+                    break;
+            }
+        });
+    </script>
+</body>
 </html>
